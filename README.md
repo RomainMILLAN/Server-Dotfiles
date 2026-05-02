@@ -34,8 +34,13 @@ alias
 ### 4. Mettre à jour
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/RomainMILLAN/Server-s-Dotfiles/main/install.sh | bash
+bash ~/.server-dotfiles/update.sh
 ```
+
+L'update.sh :
+- Compare la version locale avec la version distante
+- Met à jour uniquement si des changements sont détectés
+- Peut se mettre à jour lui-même
 
 ### 5. Désinstaller
 
