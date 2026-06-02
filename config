@@ -1,0 +1,15 @@
+# server-dotfiles configuration
+# Editer ce fichier pour personnaliser le message de bienvenue
+
+# Marque principale (affiché en haut du message)
+SERVER_DOTFILES_WELCOME_TITLE="ROMAIN MILLAN INFRASTRUCTURE"
+
+# Informations du site (optionnelles, laissez vide pour masquer)
+SERVER_DOTFILES_SITE=""
+SERVER_DOTFILES_ENVIRONMENT=""
+SERVER_DOTFILES_FQDN=""
+
+# Message d'avertissement (affiché en bas)
+# Laisser vide pour masquer la section
+SERVER_DOTFILES_WARNING="Unauthorized access is prohibited.
+All actions may be logged and audited."

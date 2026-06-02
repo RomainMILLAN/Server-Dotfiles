@@ -4,7 +4,7 @@ set -euo pipefail
 REPO="RomainMILLAN/Server-Dotfiles"
 BRANCH="main"
 RAW_BASE="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
-INSTALL_DIR="$HOME/.server-dotfiles"
+INSTALL_DIR="${SERVER_DOTFILES_DIR:-$HOME/.server-dotfiles}"
 
 echo "==> Checking for server-dotfiles updates..."
 
@@ -35,21 +35,6 @@ fi
 
 rm -f "$TMPFILE"
 
-# Check for update.sh self-update
-SELF_URL="${RAW_BASE}/update.sh"
-SELF_TMPFILE=$(mktemp)
-
-if curl -fsSL "$SELF_URL" -o "$SELF_TMPFILE" 2>/dev/null; then
-    if ! diff -q "$0" "$SELF_TMPFILE" >/dev/null 2>&1; then
-        cp "$SELF_TMPFILE" "$0"
-        chmod +x "$0"
-        echo "==> update.sh self-updated"
-    else
-        echo "==> update.sh is up to date"
-    fi
-    rm -f "$SELF_TMPFILE"
-fi
-
 # Check for install.sh update
 INSTALL_URL="${RAW_BASE}/install.sh"
 INSTALL_TMPFILE=$(mktemp)
@@ -66,5 +51,36 @@ if curl -fsSL "$INSTALL_URL" -o "$INSTALL_TMPFILE" 2>/dev/null; then
     rm -f "$INSTALL_TMPFILE"
 fi
 
+# Check for config update (download as config.default, never overwrites user config)
+CONFIG_URL="${RAW_BASE}/config"
+CONFIG_TMPFILE=$(mktemp)
+
+if curl -fsSL "$CONFIG_URL" -o "$CONFIG_TMPFILE" 2>/dev/null; then
+    if [ -f "$INSTALL_DIR/config" ]; then
+        cp "$CONFIG_TMPFILE" "$INSTALL_DIR/config.default"
+        echo "==> config.default downloaded (your config is unchanged)"
+    else
+        cp "$CONFIG_TMPFILE" "$INSTALL_DIR/config"
+        echo "==> config file created from default"
+    fi
+    rm -f "$CONFIG_TMPFILE"
+fi
+
 echo "==> Update check complete"
 echo "==> Run 'source ~/.bashrc' or reconnect to activate any changes"
+
+# Self-update is LAST (cp over $0 after all other operations are done,
+# so Bash never needs to re-read a modified script mid-execution)
+SELF_URL="${RAW_BASE}/update.sh"
+SELF_TMPFILE=$(mktemp)
+
+if curl -fsSL "$SELF_URL" -o "$SELF_TMPFILE" 2>/dev/null; then
+    if ! diff -q "$0" "$SELF_TMPFILE" >/dev/null 2>&1; then
+        cp "$SELF_TMPFILE" "$0"
+        chmod +x "$0"
+        echo "==> update.sh self-updated"
+    else
+        echo "==> update.sh is up to date"
+    fi
+    rm -f "$SELF_TMPFILE"
+fi
