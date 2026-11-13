@@ -99,18 +99,20 @@ fi
 echo "==> Update check complete"
 echo "==> Run 'source ~/.bashrc' or reconnect to activate any changes"
 
-# Self-update is LAST (cp over $0 after all other operations are done,
-# so Bash never needs to re-read a modified script mid-execution)
+# Self-update is LAST. Bash reads a script incrementally: overwriting $0 in
+# place (cp) makes it read the rest of the NEW file at the old offset -> syntax
+# error. `mv` swaps in a new inode instead, so this running instance keeps
+# reading the old, unchanged file. The temp file lives next to $0 so mv is an
+# atomic rename on the same filesystem.
 SELF_URL="${RAW_BASE}/update.sh"
-SELF_TMPFILE=$(mktemp)
+SELF_TMPFILE=$(mktemp "$(dirname "$0")/.update.sh.XXXXXX")
 
-if curl -fsSL "$SELF_URL" -o "$SELF_TMPFILE" 2>/dev/null; then
-    if ! diff -q "$0" "$SELF_TMPFILE" >/dev/null 2>&1; then
-        cp "$SELF_TMPFILE" "$0"
-        chmod +x "$0"
-        echo "==> update.sh self-updated"
-    else
-        echo "==> update.sh is up to date"
-    fi
-    rm -f "$SELF_TMPFILE"
+if curl -fsSL "$SELF_URL" -o "$SELF_TMPFILE" 2>/dev/null \
+    && ! diff -q "$0" "$SELF_TMPFILE" >/dev/null 2>&1; then
+    chmod +x "$SELF_TMPFILE"
+    mv -f "$SELF_TMPFILE" "$0"
+    echo "==> update.sh self-updated"
+    exit 0
 fi
+rm -f "$SELF_TMPFILE"
+echo "==> update.sh is up to date"
