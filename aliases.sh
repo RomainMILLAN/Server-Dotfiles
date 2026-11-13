@@ -114,6 +114,18 @@ Commands:
     esac
 }
 
+# Tab completion for srv-dotfiles subcommands
+_srv_dotfiles_complete() {
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local words=""
+    case "$COMP_CWORD" in
+        1) words="update server remove help" ;;
+        2) [ "${COMP_WORDS[1]}" = "server" ] && words="update" ;;
+    esac
+    COMPREPLY=($(compgen -W "$words" -- "$cur"))
+}
+complete -F _srv_dotfiles_complete srv-dotfiles
+
 # --- Login message -------------------------------------------
 _server_dotfiles_welcome() {
     [ -n "$SERVER_DOTFILES_NO_MESSAGE" ] && return
