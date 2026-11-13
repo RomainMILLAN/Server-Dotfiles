@@ -54,6 +54,17 @@ if [ -n "$UPDATE_TMPFILE" ]; then
     echo "==> update.sh installed in $INSTALL_DIR/"
 fi
 
+# Install server-update.sh (non-blocking)
+SERVER_UPDATE_TMPFILE=$(mktemp)
+if curl -fsSL "${RAW_BASE}/server-update.sh" -o "$SERVER_UPDATE_TMPFILE" 2>/dev/null; then
+    cp "$SERVER_UPDATE_TMPFILE" "$INSTALL_DIR/server-update.sh"
+    chmod +x "$INSTALL_DIR/server-update.sh"
+    echo "==> server-update.sh installed in $INSTALL_DIR/"
+else
+    echo "WARNING: failed to download server-update.sh (will skip)"
+fi
+rm -f "$SERVER_UPDATE_TMPFILE"
+
 # Install config file (only if not exists)
 if [ ! -f "$INSTALL_DIR/config" ]; then
     if ! curl -fsSL "${RAW_BASE}/config" -o "$INSTALL_DIR/config" 2>/dev/null; then

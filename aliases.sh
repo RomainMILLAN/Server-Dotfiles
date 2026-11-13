@@ -93,6 +93,7 @@ dka() {
 
 # --- Server dotfiles ----------------------------------------
 alias dotfiles_update="bash \"$SERVER_DOTFILES_DIR/update.sh\""
+alias server_update="bash \"$SERVER_DOTFILES_DIR/server-update.sh\""
 
 # --- Login message -------------------------------------------
 _server_dotfiles_welcome() {

@@ -51,6 +51,21 @@ if curl -fsSL "$INSTALL_URL" -o "$INSTALL_TMPFILE" 2>/dev/null; then
     rm -f "$INSTALL_TMPFILE"
 fi
 
+# Check for server-update.sh update (created if missing)
+SERVER_UPDATE_URL="${RAW_BASE}/server-update.sh"
+SERVER_UPDATE_TMPFILE=$(mktemp)
+
+if curl -fsSL "$SERVER_UPDATE_URL" -o "$SERVER_UPDATE_TMPFILE" 2>/dev/null; then
+    if ! diff -q "$INSTALL_DIR/server-update.sh" "$SERVER_UPDATE_TMPFILE" >/dev/null 2>&1; then
+        cp "$SERVER_UPDATE_TMPFILE" "$INSTALL_DIR/server-update.sh"
+        chmod +x "$INSTALL_DIR/server-update.sh"
+        echo "==> server-update.sh updated"
+    else
+        echo "==> server-update.sh is up to date"
+    fi
+fi
+rm -f "$SERVER_UPDATE_TMPFILE"
+
 # Check for config update (download as config.default, never overwrites user config)
 CONFIG_URL="${RAW_BASE}/config"
 CONFIG_TMPFILE=$(mktemp)
