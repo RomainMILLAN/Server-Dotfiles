@@ -60,5 +60,6 @@ Le remove.sh (avec confirmation) :
 | Cat | `cat`, `more` | `bat`/`batcat` si dispo |
 | Docker | `d`, `dps`, `dc`, `dcl`, `dclf`, `dce`, `dceit`, `dcr`, `dcrm`, `dip` | Commandes Docker courantes |
 | Docker prune | `dspa`, `dnk`, `dka` | Nettoyage Docker interactif |
-| Dotfiles | `dotfiles_update` | Mise à jour des dotfiles |
-| Système | `server_update` | `apt update` / `upgrade` / `full-upgrade` + reboot si nécessaire (confirmé) |
+| Dotfiles | `srv-dotfiles update` | Mise à jour des dotfiles |
+| Dotfiles | `srv-dotfiles remove` | Désinstallation des dotfiles (confirmée) |
+| Système | `srv-dotfiles server update` | `apt update` / `upgrade` / `full-upgrade` + reboot si nécessaire (confirmé) |

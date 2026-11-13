@@ -92,8 +92,27 @@ dka() {
 }
 
 # --- Server dotfiles ----------------------------------------
-alias dotfiles_update="bash \"$SERVER_DOTFILES_DIR/update.sh\""
-alias server_update="bash \"$SERVER_DOTFILES_DIR/server-update.sh\""
+srv-dotfiles() {
+    local usage="Usage: srv-dotfiles <command>
+
+Commands:
+  update          Update server-dotfiles
+  server update   apt update/upgrade/full-upgrade + reboot if required
+  remove          Uninstall server-dotfiles"
+
+    case "${1:-}" in
+        update) bash "$SERVER_DOTFILES_DIR/update.sh" ;;
+        remove) bash "$SERVER_DOTFILES_DIR/remove.sh" ;;
+        server)
+            case "${2:-}" in
+                update) bash "$SERVER_DOTFILES_DIR/server-update.sh" ;;
+                *) echo "$usage" >&2; return 1 ;;
+            esac
+            ;;
+        ""|help|-h|--help) echo "$usage" ;;
+        *) echo "$usage" >&2; return 1 ;;
+    esac
+}
 
 # --- Login message -------------------------------------------
 _server_dotfiles_welcome() {
