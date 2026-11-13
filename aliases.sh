@@ -163,8 +163,13 @@ _server_dotfiles_welcome() {
 
     local updates=0 security=0
     if command -v apt >/dev/null 2>&1; then
-        updates=$(apt list --upgradable 2>/dev/null | grep -c upgradable 2>/dev/null) || true
-        security=$(apt-get --just-print upgrade 2>/dev/null | grep -c "^Inst.*security" 2>/dev/null) || true
+        # Simule un full-upgrade plutôt que `apt list --upgradable` : ce dernier
+        # compte aussi les paquets que apt n'installera pas (phased updates
+        # d'Ubuntu, paquets en hold), d'où un "updates pending" permanent.
+        local apt_sim
+        apt_sim=$(apt-get --just-print full-upgrade 2>/dev/null) || true
+        updates=$(printf '%s\n' "$apt_sim" | grep -c "^Inst ") || true
+        security=$(printf '%s\n' "$apt_sim" | grep -c "^Inst.*security") || true
     fi
 
     local has_site=0
