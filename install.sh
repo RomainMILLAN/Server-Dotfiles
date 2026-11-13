@@ -65,6 +65,17 @@ else
 fi
 rm -f "$SERVER_UPDATE_TMPFILE"
 
+# Install remove.sh (non-blocking)
+REMOVE_TMPFILE=$(mktemp)
+if curl -fsSL "${RAW_BASE}/remove.sh" -o "$REMOVE_TMPFILE" 2>/dev/null; then
+    cp "$REMOVE_TMPFILE" "$INSTALL_DIR/remove.sh"
+    chmod +x "$INSTALL_DIR/remove.sh"
+    echo "==> remove.sh installed in $INSTALL_DIR/"
+else
+    echo "WARNING: failed to download remove.sh (will skip)"
+fi
+rm -f "$REMOVE_TMPFILE"
+
 # Install config file (only if not exists)
 if [ ! -f "$INSTALL_DIR/config" ]; then
     if ! curl -fsSL "${RAW_BASE}/config" -o "$INSTALL_DIR/config" 2>/dev/null; then

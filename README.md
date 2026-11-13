@@ -45,9 +45,12 @@ L'update.sh :
 ### 5. Désinstaller
 
 ```bash
-rm -rf ~/.server-dotfiles
-# Supprimer le bloc "# --- server-dotfiles ---" dans ~/.bashrc
+bash ~/.server-dotfiles/remove.sh
 ```
+
+Le remove.sh (avec confirmation) :
+- Retire le bloc `# --- server-dotfiles ---` de `~/.bashrc` (sauvegarde dans `~/.bashrc.bak`)
+- Supprime `~/.server-dotfiles` (config comprise)
 
 ## Alias inclus
 

@@ -66,6 +66,21 @@ if curl -fsSL "$SERVER_UPDATE_URL" -o "$SERVER_UPDATE_TMPFILE" 2>/dev/null; then
 fi
 rm -f "$SERVER_UPDATE_TMPFILE"
 
+# Check for remove.sh update (created if missing)
+REMOVE_URL="${RAW_BASE}/remove.sh"
+REMOVE_TMPFILE=$(mktemp)
+
+if curl -fsSL "$REMOVE_URL" -o "$REMOVE_TMPFILE" 2>/dev/null; then
+    if ! diff -q "$INSTALL_DIR/remove.sh" "$REMOVE_TMPFILE" >/dev/null 2>&1; then
+        cp "$REMOVE_TMPFILE" "$INSTALL_DIR/remove.sh"
+        chmod +x "$INSTALL_DIR/remove.sh"
+        echo "==> remove.sh updated"
+    else
+        echo "==> remove.sh is up to date"
+    fi
+fi
+rm -f "$REMOVE_TMPFILE"
+
 # Check for config update (download as config.default, never overwrites user config)
 CONFIG_URL="${RAW_BASE}/config"
 CONFIG_TMPFILE=$(mktemp)
